@@ -9,7 +9,6 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;width:100%;height:100%;overflow-x:hidden}
 body{background:#050507;background-image:radial-gradient(ellipse 800px 600px at 15% 10%, rgba(124,58,237,0.18) 0%, transparent 50%),radial-gradient(ellipse 600px 400px at 85% 15%, rgba(59,130,246,0.15) 0%, transparent 50%),radial-gradient(ellipse 700px 500px at 50% -10%, rgba(250,204,21,0.08) 0%, transparent 60%),radial-gradient(ellipse at bottom, #12121f 0%, #050507 70%);color:var(--text);font-family:Inter,system-ui,Arial;display:block;transition:background 0.3s,color 0.3s}
-/* ===== WHITE / LIGHT THEME ===== */
 body.light{background:#f2f3f7;background-image:none;color:#111827}
 body.light{--text:#111827;--muted:#6b7280;--muted2:#9ca3af;--inputBg:#ffffff;--rowBg:#ffffff;--sideBg:#ffffff}
 body.light .side{background:#ffffff;border-right:1px solid #e5e7eb}
@@ -29,6 +28,7 @@ body.light .del-x{background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb}
 body.light .cal-nav-btn{background:#f3f4f6;color:#111827;border:1px solid #e5e7eb}
 .theme-btn{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:#fff;cursor:pointer;font-size:12px;font-weight:700;width:auto;white-space:nowrap}
 body.light .theme-btn{background:#111827;color:#fff;border-color:#111827}
+.sync-btn{padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,#22c55e,#16a34a);color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:800;width:auto;white-space:nowrap}
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:#0a0a0f}::-webkit-scrollbar-thumb{background:#242436;border-radius:10px}
 body.light ::-webkit-scrollbar-track{background:#e5e7eb}body.light ::-webkit-scrollbar-thumb{background:#cbd5e1}
 .side{width:270px;position:fixed;left:0;top:0;bottom:0;background:var(--sideBg);backdrop-filter:blur(24px);height:100vh;height:100dvh;padding:20px;border-right:1px solid rgba(255,255,255,0.06);overflow-y:auto;overflow-x:hidden;z-index:10}
@@ -100,7 +100,7 @@ body.light .modal{background:rgba(0,0,0,0.4)}
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBNbLsUsCG-GXarWVwTI961vog9v_kVgZY",
   authDomain: "kesflo-77f45.firebaseapp.com",
@@ -111,16 +111,16 @@ const firebaseConfig = {
 };
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
-window.db=db; window.fbDoc=doc; window.fbSetDoc=setDoc; window.fbGetDocs=getDocs; window.fbCollection=collection; window.fbServerTimestamp=serverTimestamp; window.firebaseReady=true;
-console.log("✅ Firebase V8.8 Injected - kesflo-77f45");
+window.db=db; window.fbDoc=doc; window.fbSetDoc=setDoc; window.fbGetDoc=getDoc; window.fbOnSnapshot=onSnapshot; window.fbServerTimestamp=serverTimestamp; window.firebaseReady=true;
+console.log("✅ Firebase V8.9 Live Sync - kesflo-77f45");
 </script>
 </head>
 <body>
 <div id="loginOverlay">
 <div class="login-box">
 <h2 style="text-align:center;background:linear-gradient(90deg,var(--gold),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;margin:0">KES EDGEFLO</h2>
-<p style="text-align:center;color:#888;font-size:10.5px;letter-spacing:1px;margin:6px 0 0 0">V8.8 • FIREBASE CLOUD • PRO X</p>
-<div style="text-align:center;font-size:11px;color:#22c55e;margin-top:8px">☁️ Firebase: kesflo-77f45 • $0 FREE LIVE</div>
+<p style="text-align:center;color:#888;font-size:10.5px;letter-spacing:1px;margin:6px 0 0 0">V8.9 • LIVE SYNC • PRO X</p>
+<div style="text-align:center;font-size:11px;color:#22c55e;margin-top:8px">☁️ Firebase: kesflo-77f45 • LIVE SYNC</div>
 <div style="margin:16px 0"><label style="font-size:10.5px;color:#888">SELECT ACCOUNT</label><select id="loginSelect"></select></div>
 <div style="margin:16px 0"><label style="font-size:10.5px;color:#888">PASSWORD</label><input id="loginPass" type="password" placeholder="Enter password"></div>
 <div id="loginError" style="color:var(--red);font-size:11.5px;text-align:center;margin:6px 0;display:none"></div>
@@ -130,9 +130,9 @@ console.log("✅ Firebase V8.8 Injected - kesflo-77f45");
 </div>
 </div>
 <div class="side">
-<h2>KES EDGEFLO</h2><small style="color:#666;letter-spacing:1px;font-size:11px">V8.8 • FIREBASE • PRO X</small>
-<div style="margin:10px 0"><button class="theme-btn" id="themeBtn" onclick="toggleTheme()" style="width:100%">🌙 Dark Mode • Tap for White</button></div>
-<div id="cloudBadge" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:8px;margin:10px 0;text-align:center;font-size:11px;color:#22c55e">☁️ CLOUD SYNC ACTIVE<br><small style="color:#888">kesflo-77f45 • $0 FREE</small></div>
+<h2>KES EDGEFLO</h2><small style="color:#666;letter-spacing:1px;font-size:11px">V8.9 • LIVE SYNC • PRO X</small>
+<div style="margin:10px 0;display:flex;gap:6px"><button class="theme-btn" id="themeBtn" onclick="toggleTheme()" style="flex:1">🌙 Dark</button><button class="sync-btn" onclick="syncNow()" style="flex:1">🔄 SYNC NOW</button></div>
+<div id="cloudBadge" style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:8px;margin:10px 0;text-align:center;font-size:11px;color:#22c55e">☁️ LIVE SYNC ACTIVE<br><small id="syncTime" style="color:#888">Waiting for sync...</small></div>
 <div style="margin:14px 0"><b style="font-size:10px;color:#666;letter-spacing:1px">ACCOUNTS</b><div id="acctSwitch" style="margin-top:8px"></div><button class="ghost" style="margin-top:8px;font-size:11px;padding:8px" onclick="logout()">🔒 Logout / Switch</button></div>
 <div class="nav active" onclick="tab('dash')">📊 Dashboard</div>
 <div class="nav" onclick="tab('wmt')" style="background:linear-gradient(90deg, rgba(124,58,237,0.15), rgba(250,204,21,0.1));border-color:rgba(124,58,237,0.3)">💎 WeMasterTrade $5K</div>
@@ -146,7 +146,7 @@ console.log("✅ Firebase V8.8 Injected - kesflo-77f45");
 <div class="nav" onclick="tab('guard')">🛡️ Trade Guard</div>
 </div>
 <div class="main">
-<div id="topBar" class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><div style="min-width:0"><b id="curAcctName" style="font-size:13px">Demo</b> • <span id="loginStatus" style="color:var(--green);font-size:10.5px">● LOGGED IN</span> • <span id="liveClock" style="color:#888;font-size:10.5px">--</span></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button class="theme-btn" onclick="toggleTheme()" id="topThemeBtn">🌙 / ☀️</button><div style="font-size:12px"><span id="livePL" style="color:var(--gold);font-weight:800">$0</span> • <span id="liveWR">0%</span> • <span id="liveBal" style="color:var(--gold);font-weight:900">$0 Total</span> • <span style="color:#22c55e;font-size:10px">☁️ CLOUD</span></div></div></div>
+<div id="topBar" class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><div style="min-width:0"><b id="curAcctName" style="font-size:13px">Demo</b> • <span id="loginStatus" style="color:var(--green);font-size:10.5px">● LOGGED IN</span> • <span id="liveClock" style="color:#888;font-size:10.5px">--</span></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button class="sync-btn" onclick="syncNow()">🔄 SYNC</button><button class="theme-btn" onclick="toggleTheme()" id="topThemeBtn">🌙 / ☀️</button><div style="font-size:12px"><span id="livePL" style="color:var(--gold);font-weight:800">$0</span> • <span id="liveWR">0%</span> • <span id="liveBal" style="color:var(--gold);font-weight:900">$0 Total</span> • <span style="color:#22c55e;font-size:10px">☁️ LIVE</span></div></div></div>
 <div id="dash">
 <h1 style="font-weight:900;letter-spacing:-0.5px;font-size:26px;margin:8px 0">Dashboard <span style="background:linear-gradient(90deg,var(--gold),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Professional Growth</span></h1>
 <div class="grid4">
@@ -159,7 +159,7 @@ console.log("✅ Firebase V8.8 Injected - kesflo-77f45");
 <div class="card dash-card"><small style="color:#777;font-size:10px">MOST TRADED</small><h2 id="dPair" style="font-size:20px">-</h2><small style="font-size:9px;color:#888" id="dPairSub">Your edge pair</small></div>
 <div class="card dash-card"><small style="color:#777;font-size:10px">AVG WIN/LOSS</small><h2 id="dAvg" style="font-size:16px">$0/$0</h2><div class="progress"><div id="avgBar" class="progress-bar" style="width:50%"></div></div></div>
 </div>
-<div class="card"><h3 style="font-size:14px;margin:0 0 8px 0">Equity — Japanese Candlesticks <span style="color:var(--gold);font-size:11px">● Live</span> <span style="color:#22c55e;font-size:10px">☁️ Cloud Sync</span></h3><canvas id="chart" width="800" height="300" style="width:100%;background:radial-gradient(ellipse at center, #161622 0%, #000 100%);border-radius:12px;display:block"></canvas></div>
+<div class="card"><h3 style="font-size:14px;margin:0 0 8px 0">Equity — Japanese Candlesticks <span style="color:var(--gold);font-size:11px">● Live</span> <span style="color:#22c55e;font-size:10px">☁️ Live Sync</span></h3><canvas id="chart" width="800" height="300" style="width:100%;background:radial-gradient(ellipse at center, #161622 0%, #000 100%);border-radius:12px;display:block"></canvas></div>
 </div>
 <div id="wmt" style="display:none">
 <h1 style="font-weight:900">WeMasterTrade <span style="background:linear-gradient(90deg,var(--purple),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent">$5K Challenge Tracker</span></h1>
@@ -240,12 +240,12 @@ let processes=JSON.parse(localStorage.getItem('kesProcessV86')||'null')||['9:30 
 let rules=JSON.parse(localStorage.getItem('kesRulesV86')||'null')||['Only EURUSD + GBPJPY - 2 Pairs Only','9:30 Markups - 10:00 Sweep + Momentum - 11:00 London Entry','London 11AM-1PM EAT Entry Only - 1PM Hard Cut-off','1 trade per day on School / Friday - 1 Win and Done Friday','SL 25-30 pips','TP Zone OR 3RR Fallback','If no Sweep + Pin with Displacement NO trade','NO Left / Pending Orders - Confirmation Only','School = Alert Only - No Trading in Class'];
 let guards=JSON.parse(localStorage.getItem('kesGuardsV86')||'null')||['Sweep of Asian High/Low at 11AM London?','Pin with Displacement Confirmed?','Entry at POI Only?','NO Left / Pending Order - Market Order Only?','25-30 pip SL set','TP = Zone OR 3RR?','No red news now','Emotion calm','1 trade per day respected - Friday 1 Win and Done'];
 let wmtState=JSON.parse(localStorage.getItem('wmtStateV86')||'null')||{size:5000,phase:1,totalPL:0,dailyPL:0};
+let isSyncing=false; let unsubCloud=null; let lastSyncTime=0; let lastCloudHash='';
 
-// ===== THEME: WHITE / DARK =====
 function applyTheme(){
   let t=localStorage.getItem('kesThemeV88')||'dark';
   if(t==='light'){document.body.classList.add('light');}else{document.body.classList.remove('light');}
-  let btn=document.getElementById('themeBtn'); if(btn) btn.innerText = t==='light' ? '☀️ White Mode • Tap for Dark' : '🌙 Dark Mode • Tap for White';
+  let btn=document.getElementById('themeBtn'); if(btn) btn.innerText = t==='light' ? '☀️ White' : '🌙 Dark';
   let topBtn=document.getElementById('topThemeBtn'); if(topBtn) topBtn.innerText = t==='light' ? '☀️ White' : '🌙 Dark';
   let loginBtn=document.getElementById('loginThemeBtn'); if(loginBtn) loginBtn.innerText = t==='light' ? '☀️ White Mode - Tap for Dark' : '🌙 Dark Mode - Tap for White';
 }
@@ -256,8 +256,11 @@ function toggleTheme(){
   applyTheme();
 }
 applyTheme();
-
-function saveAll(){
+function updateSyncUI(msg){
+  let el=document.getElementById('syncTime'); if(el) el.innerText=msg||('Synced '+new Date(lastSyncTime).toLocaleTimeString());
+  let badge=document.getElementById('cloudBadge'); if(badge && lastSyncTime) badge.innerHTML="☁️ LIVE SYNC ACTIVE<br><small id='syncTime'>Synced "+new Date(lastSyncTime).toLocaleTimeString()+" • kesflo-77f45</small>";
+}
+function saveLocalOnly(){
   localStorage.setItem('kesAccountsV86',JSON.stringify(accounts));
   localStorage.setItem('kesAllTradesV86',JSON.stringify(allTrades));
   localStorage.setItem('kesCurIdV86',curId);
@@ -266,33 +269,73 @@ function saveAll(){
   localStorage.setItem('kesRulesV86',JSON.stringify(rules));
   localStorage.setItem('kesGuardsV86',JSON.stringify(guards));
   localStorage.setItem('wmtStateV86',JSON.stringify(wmtState));
-  if(window.firebaseReady && isLoggedIn){ saveToFirebase(); }
+}
+async function saveAll(){
+  saveLocalOnly();
+  if(window.firebaseReady && isLoggedIn){ await saveToFirebase(); }
 }
 async function saveToFirebase(){
+  if(isSyncing) return;
   try{
+    updateSyncUI('Syncing...');
     const userDoc = window.fbDoc(window.db, "users", curId);
-    await window.fbSetDoc(userDoc, { accounts, allTrades, routines, processes, rules, guards, wmtState, updatedAt: window.fbServerTimestamp() }, {merge:true});
-    let badge=document.getElementById('cloudBadge'); if(badge){ badge.innerHTML="☁️ CLOUD SYNCED<br><small>"+new Date().toLocaleTimeString()+" • kesflo-77f45</small>"; setTimeout(()=>{badge.innerHTML="☁️ CLOUD SYNC ACTIVE<br><small>kesflo-77f45 • $0 FREE</small>";},2000); }
-  }catch(e){ console.error(e); }
+    let payload={accounts,allTrades,routines,processes,rules,guards,wmtState,updatedAt:window.fbServerTimestamp()};
+    lastCloudHash=JSON.stringify(payload);
+    await window.fbSetDoc(userDoc, payload, {merge:true});
+    lastSyncTime=Date.now();
+    updateSyncUI();
+  }catch(e){ console.error('Save failed',e); updateSyncUI('Sync FAILED - Tap SYNC NOW'); }
 }
-async function loadFromFirebase(){
+function applyCloudData(data){
+  if(!data) return;
+  isSyncing=true;
   try{
-    const snap = await window.fbGetDocs(window.fbCollection(window.db, "users"));
-    snap.forEach(d=>{
-      if(d.id===curId){
-        const data=d.data();
-        if(data.allTrades){ allTrades=data.allTrades; localStorage.setItem('kesAllTradesV86',JSON.stringify(allTrades)); }
-        if(data.accounts) accounts=data.accounts;
-        if(data.routines) routines=data.routines;
-        if(data.processes) processes=data.processes;
-        if(data.rules) rules=data.rules;
-        if(data.guards) guards=data.guards;
-        if(data.wmtState) wmtState=data.wmtState;
-      }
-    });
-    updateDash(); renderAllChecks(); drawCal(); updateWMT();
+    if(data.allTrades) allTrades=data.allTrades;
+    if(data.accounts) accounts=data.accounts;
+    if(data.routines) routines=data.routines;
+    if(data.processes) processes=data.processes;
+    if(data.rules) rules=data.rules;
+    if(data.guards) guards=data.guards;
+    if(data.wmtState) wmtState=data.wmtState;
+    saveLocalOnly();
+    renderAccts(); updateDash(); renderAllChecks(); drawCal(); updateWMT();
+    lastSyncTime=Date.now(); updateSyncUI();
+  }finally{ setTimeout(()=>{isSyncing=false;},300); }
+}
+function startCloudListener(){
+  if(!window.firebaseReady) return;
+  if(unsubCloud) { try{unsubCloud();}catch(e){} unsubCloud=null; }
+  try{
+    let ref=window.fbDoc(window.db,"users",curId);
+    unsubCloud=window.fbOnSnapshot(ref,(snap)=>{
+      if(!snap.exists()) return;
+      let data=snap.data();
+      // Don't re-apply our own just-saved data - prevents flicker / overwrite loop
+      let h=JSON.stringify({accounts:data.accounts,allTrades:data.allTrades,routines:data.routines,processes:data.processes,rules:data.rules,guards:data.guards,wmtState:data.wmtState,updatedAt:data.updatedAt});
+      if(h===lastCloudHash) return;
+      if(isSyncing) return;
+      applyCloudData(data);
+    },(err)=>{ console.error(err); updateSyncUI('Live sync error - Tap SYNC NOW'); });
   }catch(e){ console.error(e); }
 }
+async function syncNow(){
+  if(!window.firebaseReady){ alert('Firebase not ready'); return; }
+  updateSyncUI('Pulling from Cloud...');
+  try{
+    let ref=window.fbDoc(window.db,"users",curId);
+    let snap=await window.fbGetDoc(ref);
+    if(snap.exists()){
+      applyCloudData(snap.data());
+      alert('✅ Synced from Cloud - '+new Date().toLocaleTimeString());
+    } else {
+      // No cloud doc yet - push local up
+      await saveToFirebase();
+      alert('☁️ No cloud data found - Pushed this device up as first copy');
+    }
+  }catch(e){ console.error(e); alert('Sync failed - check internet'); }
+}
+async function loadFromFirebase(){ await syncNow(); }
+
 function renderLoginSelect(){let sel=document.getElementById('loginSelect');sel.innerHTML=accounts.map(a=>`<option value="${a.id}">${a.name} - ${a.type}</option>`).join('');sel.value=curId;}
 async function doLogin(){
   let selId=document.getElementById('loginSelect').value;
@@ -302,34 +345,34 @@ async function doLogin(){
   if(!acc.password||acc.password==''){
     if(!pass){err.style.display='block';err.innerText='First time: Set password (4+ chars)';return;}
     if(pass.length<4){err.style.display='block';err.innerText='4+ chars';return;}
-    acc.password=pass;saveAll();curId=selId;isLoggedIn=true;
+    acc.password=pass;curId=selId;isLoggedIn=true;
     document.getElementById('loginOverlay').style.display='none';
     renderAccts();updateDash();renderAllChecks();drawCal();updateWMT();
-    await loadFromFirebase(); return;
+    startCloudListener(); await saveAll(); await syncNow(); return;
   }
   if(acc.password===pass){
     curId=selId;isLoggedIn=true;
-    document.getElementById('loginOverlay').style.display='none';err.style.display='none';saveAll();renderAccts();updateDash();renderAllChecks();drawCal();updateWMT();
-    await loadFromFirebase();
+    document.getElementById('loginOverlay').style.display='none';err.style.display='none';saveLocalOnly();renderAccts();updateDash();renderAllChecks();drawCal();updateWMT();
+    startCloudListener(); await syncNow();
   }else{err.style.display='block';err.innerText='Wrong password';}
 }
 function setPassword(){let selId=document.getElementById('loginSelect').value;let pass=document.getElementById('loginPass').value;let acc=accounts.find(a=>a.id==selId);if(!pass||pass.length<4){alert('Enter new password first');return;}acc.password=pass;saveAll();alert('Password set for '+acc.name);}
-function logout(){isLoggedIn=false;document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPass').value='';renderLoginSelect();}
-function switchAcct(id){
+function logout(){isLoggedIn=false; if(unsubCloud){try{unsubCloud();}catch(e){} unsubCloud=null;} document.getElementById('loginOverlay').style.display='flex';document.getElementById('loginPass').value='';renderLoginSelect();}
+async function switchAcct(id){
   let acc=accounts.find(a=>a.id==id);
   if(isLoggedIn&&curId!==id&&acc.password){
     let p=prompt('Enter password for '+acc.name+':');
     if(p!==acc.password){alert('Wrong password!');return;}
   }
-  curId=id;saveAll();renderAccts();updateDash();renderAllChecks();drawCal();updateWMT();
-  if(isLoggedIn) loadFromFirebase();
+  curId=id;await saveAll();renderAccts();updateDash();renderAllChecks();drawCal();updateWMT();
+  if(isLoggedIn){ startCloudListener(); await syncNow(); }
 }
 function setPair(p){curPair=p;document.querySelectorAll('[id^=p]').forEach(el=>el.classList.remove('active'));let el=document.getElementById('p'+p);if(el)el.classList.add('active'); loadTV(p);}
 function setLotPair(p){lotPair=p;document.querySelectorAll('[id^=lot]').forEach(el=>el.classList.remove('active'));let el=document.getElementById('lot'+p);if(el)el.classList.add('active');document.getElementById('lotPairName').innerText=p;curPair=p;setPair(p);calcLot();}
-function renderAccts(){document.getElementById('acctSwitch').innerHTML=accounts.map(a=>`<span class="acct-pill ${a.id==curId?'active':''}" onclick="switchAcct('${a.id}')">${a.name}</span>`).join('');let cur=accounts.find(a=>a.id==curId);document.getElementById('curAcctName').innerText=cur.name;document.getElementById('inDep').value=cur.deposit;document.getElementById('inWith').value=cur.withdrawn;document.getElementById('loginStatus').innerText='● LOGGED IN: '+cur.name+' ☁️';}
+function renderAccts(){document.getElementById('acctSwitch').innerHTML=accounts.map(a=>`<span class="acct-pill ${a.id==curId?'active':''}" onclick="switchAcct('${a.id}')">${a.name}</span>`).join('');let cur=accounts.find(a=>a.id==curId);document.getElementById('curAcctName').innerText=cur.name;document.getElementById('inDep').value=cur.deposit;document.getElementById('inWith').value=cur.withdrawn;document.getElementById('loginStatus').innerText='● LOGGED IN: '+cur.name+' ☁️ LIVE';}
 document.getElementById('inDep').addEventListener('change',e=>{accounts.find(a=>a.id==curId).deposit=parseFloat(e.target.value)||0;saveAll();updateDash();drawCal();updateWMT()});
 document.getElementById('inWith').addEventListener('change',e=>{accounts.find(a=>a.id==curId).withdrawn=parseFloat(e.target.value)||0;saveAll();updateDash();drawCal();updateWMT()});
-function tab(t){
+async function tab(t){
   ['dash','wmt','lot','routine','process','rules','journal','calendar','charts','guard'].forEach(x=>{let el=document.getElementById(x);if(el)el.style.display=x==t?'block':'none'});
   document.querySelectorAll('.side .nav').forEach(d=>d.classList.remove('active'));
   if(event)event.target.classList.add('active');
@@ -338,6 +381,8 @@ function tab(t){
   if(t=='lot'){updateLotQuick(); calcLot();}
   if(t=='wmt'){updateWMT();}
   if(t=='routine'||t=='process'||t=='rules'||t=='guard'){renderAllChecks();}
+  // Auto-pull fresh on every tab switch if logged in - fixes stale phone data
+  if(isLoggedIn && window.firebaseReady){ try{ let ref=window.fbDoc(window.db,"users",curId); let snap=await window.fbGetDoc(ref); if(snap.exists()) applyCloudData(snap.data()); }catch(e){} }
 }
 function renderCheckList(containerId,arr,key,progId,barId){
 let el=document.getElementById(containerId);if(!el)return;
@@ -395,7 +440,7 @@ document.getElementById('lotBalance').value=totalBal.toFixed(2);
 document.getElementById('lotQuickBal').innerText='$'+totalBal.toFixed(2);
 drawChart();updateLotQuick();updateWMT();
 }
-function saveTrade(){let trades=allTrades[curId]||[];let t={pair:curPair,entry:jEntry.value,sl:jSL.value,tp:jTP.value,sweep:jSweep.value,res:jRes.value,pl:parseFloat(jPL.value||0),rr:jRR.value,lot:jLot?jLot.value:'',emotion:jEmotion.value,note:jNote.value,date:new Date().toLocaleDateString(),dateStr:new Date().toDateString(),time:Date.now()};allTrades[curId]=[...trades,t];saveAll();updateDash();drawCal();updateWMT();jEntry.value='';jSL.value='';jTP.value='';jPL.value='';jNote.value='';jEmotion.value='';jLot.value='';alert('☁️ Saved to Firebase Cloud • Total: $'+(accounts.find(a=>a.id==curId).deposit + allTrades[curId].reduce((a,b)=>a+b.pl,0) - accounts.find(a=>a.id==curId).withdrawn).toFixed(2));}
+async function saveTrade(){let trades=allTrades[curId]||[];let t={pair:curPair,entry:jEntry.value,sl:jSL.value,tp:jTP.value,sweep:jSweep.value,res:jRes.value,pl:parseFloat(jPL.value||0),rr:jRR.value,lot:jLot?jLot.value:'',emotion:jEmotion.value,note:jNote.value,date:new Date().toLocaleDateString(),dateStr:new Date().toDateString(),time:Date.now()};allTrades[curId]=[...trades,t];await saveAll();updateDash();drawCal();updateWMT();jEntry.value='';jSL.value='';jTP.value='';jPL.value='';jNote.value='';jEmotion.value='';jLot.value='';alert('☁️ Saved + Live Synced • Total: $'+(accounts.find(a=>a.id==curId).deposit + allTrades[curId].reduce((a,b)=>a+b.pl,0) - accounts.find(a=>a.id==curId).withdrawn).toFixed(2));}
 function openReview(idx){let t=(allTrades[curId]||[])[idx];if(!t)return;curReviewIdx=idx;document.getElementById('mPair').innerText=t.pair+' - '+t.res.toUpperCase();document.getElementById('mDate').innerText=t.date;document.getElementById('mPL').innerText=t.pl+'$';document.getElementById('mRR').innerText=t.rr||'-';document.getElementById('mEntry').innerText=t.entry;document.getElementById('mSL').innerText=t.sl;document.getElementById('mTP').innerText=t.tp;document.getElementById('mSweep').innerText=t.sweep;document.getElementById('mEmotion').innerText=t.emotion||'No emotion';document.getElementById('mNote').innerText=(t.lot? 'Lot: '+t.lot+'\n':'')+(t.note||'No reflection');document.getElementById('reviewModal').classList.add('show');}
 function closeModal(){document.getElementById('reviewModal').classList.remove('show');}
 function deleteTrade(){if(curReviewIdx==null)return;if(!confirm('Delete?'))return;let arr=allTrades[curId]||[];arr.splice(curReviewIdx,1);saveAll();closeModal();updateDash();drawCal();updateWMT();}
@@ -420,14 +465,14 @@ ctx.fillStyle=col;ctx.strokeStyle=isBull?'#16a34a':'#dc2626';ctx.lineWidth=1;ctx
 ctx.shadowColor=col;ctx.shadowBlur=5;ctx.fillRect(x-candleW/2,bodyTop,candleW,bodyH||2.5);ctx.shadowBlur=0;
 });
 ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=0.5;for(let j=0;j<4;j++){let gy=pad+j*chartH/4;ctx.beginPath();ctx.moveTo(20,gy);ctx.lineTo(20+chartW,gy);ctx.stroke();}
-ctx.fillStyle='#facc15';ctx.font='11px Inter';ctx.fillText('Total: $'+bal.toFixed(2)+' • '+points.length+' candles • ☁️ Cloud', c.width-220, 18);
+ctx.fillStyle='#facc15';ctx.font='11px Inter';ctx.fillText('Total: $'+bal.toFixed(2)+' • '+points.length+' candles • ☁️ Live', c.width-220, 18);
 }
 function changeMonth(dir){if(dir===0){calViewDate=new Date();}else{calViewDate.setMonth(calViewDate.getMonth()+dir);}drawCal();}
 function drawCal(){
 let grid=document.getElementById('calGrid');let monthEl=document.getElementById('calMonth');let subEl=document.getElementById('calSub');if(!grid||!monthEl)return;
 let year=calViewDate.getFullYear();let month=calViewDate.getMonth();let now=new Date();
-monthEl.innerText=calViewDate.toLocaleString('default',{month:'long',year:'numeric'})+' — '+accounts.find(a=>a.id==curId).name+' ☁️';
-if(subEl) subEl.innerText='Live: '+now.toLocaleString('en-KE',{timeZone:'Africa/Nairobi', weekday:'short', hour:'2-digit', minute:'2-digit'})+' EAT • Firebase Cloud';
+monthEl.innerText=calViewDate.toLocaleString('default',{month:'long',year:'numeric'})+' — '+accounts.find(a=>a.id==curId).name+' ☁️ LIVE';
+if(subEl) subEl.innerText='Live: '+now.toLocaleString('en-KE',{timeZone:'Africa/Nairobi', weekday:'short', hour:'2-digit', minute:'2-digit'})+' EAT • Firebase Live Sync';
 let firstDay=new Date(year,month,1);let lastDay=new Date(year,month+1,0);let daysInMonth=lastDay.getDate();let startDay=(firstDay.getDay()+6)%7;
 let trades=allTrades[curId]||[];grid.innerHTML='';
 for(let i=0;i<startDay;i++){grid.innerHTML+=`<div class="cal-day other"><b></b></div>`;}
@@ -488,7 +533,7 @@ function useLotInJournal(){let lot=calcLot();let lotInput=document.getElementByI
 function updateWMT(){
 let size=parseInt(document.getElementById('wmtSize').value)||5000;
 let phase=document.getElementById('wmtPhase').value;
-wmtState.size=size;wmtState.phase=phase==='funded'?3:parseInt(phase);saveAll();
+wmtState.size=size;wmtState.phase=phase==='funded'?3:parseInt(phase);saveLocalOnly();
 let targetPct= phase==='1'?0.08 : phase==='2'?0.06 : 0;
 let targetAmt=size*targetPct;let dailyLimit=size*0.05;let maxLimit=size*0.10;
 document.getElementById('wmtTarget').innerText='$'+targetAmt.toFixed(0);
@@ -524,10 +569,10 @@ document.getElementById('wmtMaxLot').innerText=(size*0.02/(28*pipEUR)).toFixed(2
 function syncWMTFromJournal(){let trades=allTrades[curId]||[];let totalPL=trades.reduce((a,b)=>a+b.pl,0);let todayStr=new Date().toDateString();let dailyPL=trades.filter(t=>t.dateStr===todayStr).reduce((a,b)=>a+b.pl,0);wmtState.totalPL=totalPL;wmtState.dailyPL=dailyPL;saveAll();updateWMT();alert('Synced! Total $'+totalPL.toFixed(2)+' • Today $'+dailyPL.toFixed(2));}
 function resetWMT(){if(!confirm('Reset WMT tracker?')) return;wmtState={size:5000,phase:1,totalPL:0,dailyPL:0};saveAll();updateWMT();}
 function loadTV(pair){curPair=pair;document.querySelectorAll('[id^=tv]').forEach(el=>el.classList.remove('active'));let btn=document.getElementById('tv'+pair); if(btn)btn.classList.add('active');document.querySelectorAll('[id^=p]').forEach(el=>el.classList.remove('active'));let pbtn=document.getElementById('p'+pair); if(pbtn)pbtn.classList.add('active');let symbol = pair==='EURUSD' ? 'FX:EURUSD' : 'FX:GBPJPY';let frame=document.getElementById('tvFrame');frame.src=`https://s.tradingview.com/widgetembed/?frameElementId=tvFrame&symbol=${encodeURIComponent(symbol)}&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=%230f0f14&theme=dark&style=1&timezone=Africa%2FNairobi&locale=en`;}
-window.toggleTheme=toggleTheme; window.delItem=delItem; window.toggleCheck=toggleCheck; window.addRoutine=addRoutine; window.addProcess=addProcess; window.addRule=addRule; window.addGuard=addGuard; window.tab=tab; window.doLogin=doLogin; window.setPassword=setPassword; window.logout=logout; window.switchAcct=switchAcct; window.setPair=setPair; window.setLotPair=setLotPair; window.saveTrade=saveTrade; window.openReview=openReview; window.closeModal=closeModal; window.deleteTrade=deleteTrade; window.changeMonth=changeMonth; window.loadTV=loadTV; window.calcLot=calcLot; window.useLotInJournal=useLotInJournal; window.updateWMT=updateWMT; window.syncWMTFromJournal=syncWMTFromJournal; window.resetWMT=resetWMT;
+window.toggleTheme=toggleTheme; window.syncNow=syncNow; window.delItem=delItem; window.toggleCheck=toggleCheck; window.addRoutine=addRoutine; window.addProcess=addProcess; window.addRule=addRule; window.addGuard=addGuard; window.tab=tab; window.doLogin=doLogin; window.setPassword=setPassword; window.logout=logout; window.switchAcct=switchAcct; window.setPair=setPair; window.setLotPair=setLotPair; window.saveTrade=saveTrade; window.openReview=openReview; window.closeModal=closeModal; window.deleteTrade=deleteTrade; window.changeMonth=changeMonth; window.loadTV=loadTV; window.calcLot=calcLot; window.useLotInJournal=useLotInJournal; window.updateWMT=updateWMT; window.syncWMTFromJournal=syncWMTFromJournal; window.resetWMT=resetWMT;
 renderLoginSelect();document.getElementById('loginOverlay').style.display='flex';
 drawCal();updateWMT();renderAllChecks();
-setInterval(()=>{let el=document.getElementById('liveClock');if(el) el.innerText=new Date().toLocaleString('en-KE',{timeZone:'Africa/Nairobi', hour:'2-digit', minute:'2-digit', second:'2-digit'})+' EAT ☁️';},1000);
+setInterval(()=>{let el=document.getElementById('liveClock');if(el) el.innerText=new Date().toLocaleString('en-KE',{timeZone:'Africa/Nairobi', hour:'2-digit', minute:'2-digit', second:'2-digit'})+' EAT ☁️ LIVE';},1000);
 </script>
 </body>
 </html>
